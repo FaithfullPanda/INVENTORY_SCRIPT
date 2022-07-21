@@ -1,0 +1,349 @@
+#-------------------------------------------------------------------------------------------------------------------------------------------
+#INVENTORY.PS1 - Script by Faithfullpanda
+#Tired of searching thgourh my excel inventory file to fill it (yeah, i had to do that manually, i wanted to create a small UI to ease the process 
+#and make it faster.
+#if you see any use with this script, be my guest, and don't hesitate if you have any suggestion/commentary, I'll happily take any advice !
+#-------------------------------------------------------------------------------------------------------------------------------------------
+
+#CHANGELOG
+#-200722-ALPHA-Script Creation-Basic functions added (GUI/TXT file modification)
+#-210722-V1.0-Added Existing file checkup-Added File creation if not found-Modified code core to include more variables for a better and easier use
+#TODO_LIST
+#-Change to .exe
+#-Migrate to another language for optimization/mobile usage?
+
+#-------------------------------------------------------------------------------------------------------------------------------------------
+#VARIABLES
+#Section to create/detail the diverse variables to be used in the script
+#Should be the only part with manual changes to do if you want to use the script as is.
+#-------------------------------------------------------------------------------------------------------------------------------------------
+
+#Default localisation of the txt file that will be used/created for the inventory. 
+#Used my preference, modify as you wish here.
+$INVENTORYFILE = "c:\users\$env:UserName\desktop\inventory.txt"
+
+#Default value specified to be used later in the script/if needed
+$DEFAULTVALUE = "No DATA FOUND"
+
+#Here are the used variables in the script: modify/add/remove here according to your needs.
+#Don't forget to do the same with the same in the GUI and 
+$ID = $DEFAULTVALUE
+$SN = $DEFAULTVALUE
+$GRAI = $DEFAULTVALUE
+$TYPE = $DEFAULTVALUE
+$BRAND = $DEFAULTVALUE
+$MODEL = $DEFAULTVALUE
+$lOCALISATION = $DEFAULTVALUE
+$ASSOCIATED = $DEFAULTVALUE
+
+#-------------------------------------------------------------------------------------------------------------------------------------------
+#USER INTERFACE
+#-------------------------------------------------------------------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------------------------------------------------------------------
+#MAIN WINDOW FOR GUI
+Add-Type -AssemblyName System.Windows.Forms
+[System.Windows.Forms.Application]::EnableVisualStyles()
+
+$GUI                               = New-Object system.Windows.Forms.Form
+$GUI.ClientSize                    = New-Object System.Drawing.Point(400,364)
+#$GUI.ClientSize                    = New-Object System.Drawing.Point(615,464)
+$GUI.text                          = "INVENTORY_1.0"
+$GUI.TopMost                       = $false
+$Icon                              = New-Object system.drawing.icon ("\\srv015\sf_com\de_bona_w\oncosaveicon.ico")
+$GUI.Icon                          = $Icon
+#$GUI.BackColor                   = “Darkslateblue”
+
+#IDTEXTE
+$IDTXT = New-Object System.Windows.Forms.Label
+$IDTXT.Location = New-Object System.Drawing.Point(10,30)
+$IDTXT.Size = New-Object System.Drawing.Size(80,30)
+$IDTXT.Text = 'ID:'
+#IDBOX 
+$IDBOX = New-Object System.Windows.Forms.TextBox
+$IDBOX.Location = New-Object System.Drawing.Point(130,30)
+$IDBOX.Size = New-Object System.Drawing.Size(260,30)
+
+#SNTEXTE
+$SNTXT = New-Object System.Windows.Forms.Label
+$SNTXT.Location = New-Object System.Drawing.Point(10,60)
+$SNTXT.Size = New-Object System.Drawing.Size(80,30)
+$SNTXT.Text = 'S/N:'
+#SNBOX 
+$SNBOX = New-Object System.Windows.Forms.TextBox
+$SNBOX.Location = New-Object System.Drawing.Point(130,60)
+$SNBOX.Size = New-Object System.Drawing.Size(260,30)
+
+#GRAITEXTE
+$GRAITXT = New-Object System.Windows.Forms.Label
+$GRAITXT.Location = New-Object System.Drawing.Point(10,90)
+$GRAITXT.Size = New-Object System.Drawing.Size(80,30)
+$GRAITXT.Text = 'GRAI:'
+#GRAIBOX 
+$GRAIBOX = New-Object System.Windows.Forms.TextBox
+$GRAIBOX.Location = New-Object System.Drawing.Point(130,90)
+$GRAIBOX.Size = New-Object System.Drawing.Size(260,30)
+
+#TYPETEXTE
+$TYPETXT = New-Object System.Windows.Forms.Label
+$TYPETXT.Location = New-Object System.Drawing.Point(10,120)
+$TYPETXT.Size = New-Object System.Drawing.Size(80,30)
+$TYPETXT.Text = 'TYPE:'
+#TYPEBOX 
+$TYPEBOX = New-Object System.Windows.Forms.TextBox
+$TYPEBOX.Location = New-Object System.Drawing.Point(130,120)
+$TYPEBOX.Size = New-Object System.Drawing.Size(260,30)
+
+#BDTEXTE
+$BDTXT = New-Object System.Windows.Forms.Label
+$BDTXT.Location = New-Object System.Drawing.Point(10,150)
+$BDTXT.Size = New-Object System.Drawing.Size(80,30)
+$BDTXT.Text = 'BRAND:'
+#TYPEBOX 
+$BDBOX = New-Object System.Windows.Forms.TextBox
+$BDBOX.Location = New-Object System.Drawing.Point(130,150)
+$BDBOX.Size = New-Object System.Drawing.Size(260,30)
+
+#MODELTEXTE
+$MDTXT = New-Object System.Windows.Forms.Label
+$MDTXT.Location = New-Object System.Drawing.Point(10,180)
+$MDTXT.Size = New-Object System.Drawing.Size(80,30)
+$MDTXT.Text = 'MODEL:'
+#MODELBOX 
+$MDBOX = New-Object System.Windows.Forms.TextBox
+$MDBOX.Location = New-Object System.Drawing.Point(130,180)
+$MDBOX.Size = New-Object System.Drawing.Size(260,30)
+
+#LOCTEXTE
+$LOCTXT = New-Object System.Windows.Forms.Label
+$LOCTXT.Location = New-Object System.Drawing.Point(10,210)
+$LOCTXT.Size = New-Object System.Drawing.Size(120,30)
+$LOCTXT.Text = 'LOCALISATION:'
+#LOCBOX 
+$LOCBOX = New-Object System.Windows.Forms.TextBox
+$LOCBOX.Location = New-Object System.Drawing.Point(130,210)
+$LOCBOX.Size = New-Object System.Drawing.Size(260,30)
+
+#ASTEXTE
+$ASTXT = New-Object System.Windows.Forms.Label
+$ASTXT.Location = New-Object System.Drawing.Point(10,240)
+$ASTXT.Size = New-Object System.Drawing.Size(120,30)
+$ASTXT.Text = 'ASS. ELEMENTS:'
+#LOCBOX 
+$ASBOX = New-Object System.Windows.Forms.TextBox
+$ASBOX.Location = New-Object System.Drawing.Point(130,240)
+$ASBOX.Size = New-Object System.Drawing.Size(260,30)
+
+
+#ADD BUTTON
+$ADD                            = New-Object system.Windows.Forms.Button
+$ADD.text                        = "ADD ELEMENT"
+#$QUIT.width                       = 112
+#$QUIT.height                      = 30
+#$QUIT.location                    = New-Object System.Drawing.Point(247,422)
+$ADD.width                       = 150
+$ADD.height                      = 35
+$ADD.location                    = New-Object System.Drawing.Point(240,320)
+$ADD.Font                        = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
+$ADD.ForeColor                   = [System.Drawing.ColorTranslator]::FromHtml("#d0021b")
+
+#ADD THE ITEMS TO THE GUI
+$GUI.controls.AddRange(@( 
+        $IDTXT,
+        $IDBOX,
+        $SNTXT,
+        $SNBOX,
+        $GRAITXT,
+        $GRAIBOX,
+        $TYPETXT,
+        $TYPEBOX,
+        $BDTXT,
+        $BDBOX,
+        $MDTXT,
+        $MDBOX,
+        $LOCTXT,
+        $LOCBOX,
+        $ASTXT,
+        $ASBOX,
+        $ADD
+        #$QUIT
+    )
+)
+
+#-------------------------------------------------------------------------------------------------------------------------------------------
+#BUTTON MECHANISMS
+#-------------------------------------------------------------------------------------------------------------------------------------------
+
+#CALLS COPYDATA FUNCTION
+$ADD.add_click({ADDELEM})
+
+#region Logic 
+function Get-IP { }
+
+#endregion
+
+
+#-------------------------------------------------------------------------------------------------------------------------------------------
+#FUNCTIONS
+#Section to create the FUNCTIONS (code pieces) that are used by the script
+#
+#
+# BEWARE YOU PADAWAN WHO ENTERS THE CORE OF THIS SCRIPT.
+# MODIFY THOSE PARTS ONLY IF YOU KNOW WHATE YOU ARE DOING, YOU MAY
+# No, but seriously: changing stuff here may break the code. 
+# Really.
+# You were warned.
+# Seriously, stop.
+# DUDE..
+# Okay, whatever, Im done. 
+#-------------------------------------------------------------------------------------------------------------------------------------------
+
+function CREATEFILE {
+
+if (Test-Path $INVENTORYFILE -PathType leaf)
+{
+    #Afficher message comme quoi le fichier existe deja
+    "Inventory.txt already exists."
+
+    $GUI.ShowDialog()| Out-Null 
+
+}
+
+else
+
+{
+    #PROMPT POUR ANNONCER LA CREATION DU FICHIER selon la variable définie en debut de script
+    [System.Windows.Forms.MessageBox]::Show("Creating file: $INVENTORYFILE", "FILE CREATION" , "OK", 48 )
+
+    #Crée le fichier selon la valeur de la variable $INVENTORYFILE 
+    New-Item $INVENTORYFILE
+
+    Add-Content $INVENTORYFILE "`nID ; S/N ; GRAI ; TYPE ; MARQUE ; MODELE ; LOCALISATION ; ELEMENT ASSOCIE ;  "   
+
+    $GUI.ShowDialog()| Out-Null 
+
+}
+
+}
+
+
+function ADDELEM {
+
+    # recuperer le contenu du textbox ID
+    $string_ID = $IDBox.Text;
+    # Message et retour si la valeur est vide 
+    if ( $string_ID -eq "" ) 
+    {
+        [System.Windows.Forms.MessageBox]::Show("Le champ 'ID' ne pas être vide", "Erreur de saisie" , "OK", 48 )
+        return ; 
+    }
+
+    # recuperer le contenu du textbox SN
+    $string_SN = $SNBox.Text;
+    # Message et retour si la valeur est vide 
+    if ( $string_SN -eq "" ) 
+    {
+        [System.Windows.Forms.MessageBox]::Show("Le champ 'ID' ne pas être vide", "Erreur de saisie" , "OK", 48 )
+        return ; 
+    }
+
+    # recuperer le contenu du textbox SN
+    $string_GRAI = $GRAIBox.Text;
+    # Message et retour si la valeur est vide 
+    if ( $string_GRAI -eq "" ) 
+    {
+        [System.Windows.Forms.MessageBox]::Show("Le champ 'ID' ne pas être vide", "Erreur de saisie" , "OK", 48 )
+        return ; 
+    }
+    
+    # recuperer le contenu du textbox SN
+    $string_TYPE = $TYPEBox.Text;
+    # Message et retour si la valeur est vide 
+    if ( $string_TYPE -eq "" ) 
+    {
+        [System.Windows.Forms.MessageBox]::Show("Le champ 'ID' ne pas être vide", "Erreur de saisie" , "OK", 48 )
+        return ; 
+    }
+
+    # recuperer le contenu du textbox SN
+    $string_BRAND = $BDBox.Text;
+    # Message et retour si la valeur est vide 
+    if ( $string_BRAND -eq "" ) 
+    {
+        [System.Windows.Forms.MessageBox]::Show("Le champ 'ID' ne pas être vide", "Erreur de saisie" , "OK", 48 )
+        return ; 
+    }
+
+    # recuperer le contenu du textbox SN
+    $string_MODEL = $MDBox.Text;
+    # Message et retour si la valeur est vide 
+    if ( $string_MODEL -eq "" ) 
+    {
+        [System.Windows.Forms.MessageBox]::Show("Le champ 'ID' ne pas être vide", "Erreur de saisie" , "OK", 48 )
+        return ; 
+    }
+
+    # recuperer le contenu du textbox SN
+    $string_LOC = $LOCBox.Text;
+    # Message et retour si la valeur est vide 
+    if ( $string_LOC -eq "" ) 
+    {
+        [System.Windows.Forms.MessageBox]::Show("Le champ 'ID' ne pas être vide", "Erreur de saisie" , "OK", 48 )
+        return ; 
+    }
+
+    # recuperer le contenu du textbox SN
+    $string_AS = $ASBox.Text;
+    # Message et retour si la valeur est vide 
+    if ( $string_AS -eq "" ) 
+    {
+        [System.Windows.Forms.MessageBox]::Show("Le champ 'ID' ne pas être vide", "Erreur de saisie" , "OK", 48 )
+        return ; 
+    }
+
+#retourne les valeurs des variables dans le fichier TXT en ajoutant une ligne
+Add-Content $INVENTORYFILE "`n $string_ID ; $string_SN ; $string_GRAI ; $string_TYPE ; $string_BRAND ; $string_MODEL ; $string_LOC ; $string_AS ; "
+
+[System.Windows.MessageBox]::Show('ELEMENT ADDED')
+
+#On efface le texte dans les box du formulaire
+$IDBOX.Text = ""
+$SNBOX.Text = ""   
+$GRAIBOX.Text = ""
+$TYPEBOX.Text = ""
+$BDBOX.Text = ""
+$MDBOX.Text = ""
+$LOCBOX.Text = ""
+$ASBOX.Text = ""
+
+#On remet les variables des differents élements a la valeur par defaut choisie en debut de script
+set-Variable -Name "ID" -Value $DEFAULTVALUE
+set-Variable -Name "SN" -Value $DEFAULTVALUE
+set-Variable -Name "GRAI" -Value $DEFAULTVALUE
+set-Variable -Name "TYPE" -Value $DEFAULTVALUE
+set-Variable -Name "BRAND" -Value $DEFAULTVALUE
+set-Variable -Name "MODEL" -Value $DEFAULTVALUE
+set-Variable -Name "LOCALISATION" -Value $DEFAULTVALUE
+set-Variable -Name "ASSOCIATED" -Value $DEFAULTVALUE
+
+}
+
+#-------------------------------------------------------------------------------------------------------------------------------------------
+#HIDE PS CONSOLE WHEN RUNNING
+#-------------------------------------------------------------------------------------------------------------------------------------------
+
+$Script:showWindowAsync = Add-Type -MemberDefinition @"
+[DllImport("user32.dll")]
+public static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
+"@ -Name "Win32ShowWindowAsync" -Namespace Win32Functions -PassThru
+Function Show-Powershell()
+{
+$null = $showWindowAsync::ShowWindowAsync((Get-Process -Id $pid).MainWindowHandle, 10)
+}
+Function Hide-Powershell()
+{
+$null = $showWindowAsync::ShowWindowAsync((Get-Process -Id $pid).MainWindowHandle, 2)
+}
+
+createfile
+
