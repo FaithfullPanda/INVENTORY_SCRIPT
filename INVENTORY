@@ -234,7 +234,7 @@ function ADDELEM {
     # Message et retour si la valeur est vide 
     if ( $string_ID -eq "" ) 
     {
-        [System.Windows.Forms.MessageBox]::Show("Le champ 'ID' ne pas être vide", "Erreur de saisie" , "OK", 48 )
+        [System.Windows.Forms.MessageBox]::Show("INPUT REQUIRED", "NO DATA FOUND" , "OK", 48 )
         return ; 
     }
 
@@ -243,7 +243,7 @@ function ADDELEM {
     # Message et retour si la valeur est vide 
     if ( $string_SN -eq "" ) 
     {
-        [System.Windows.Forms.MessageBox]::Show("Le champ 'ID' ne pas être vide", "Erreur de saisie" , "OK", 48 )
+        [System.Windows.Forms.MessageBox]::Show("INPUT REQUIRED", "NO DATA FOUND" , "OK", 48 )
         return ; 
     }
 
@@ -252,7 +252,7 @@ function ADDELEM {
     # Message et retour si la valeur est vide 
     if ( $string_GRAI -eq "" ) 
     {
-        [System.Windows.Forms.MessageBox]::Show("Le champ 'ID' ne pas être vide", "Erreur de saisie" , "OK", 48 )
+        [System.Windows.Forms.MessageBox]::Show("INPUT REQUIRED", "NO DATA FOUND" , "OK", 48 )
         return ; 
     }
     
@@ -261,7 +261,7 @@ function ADDELEM {
     # Message et retour si la valeur est vide 
     if ( $string_TYPE -eq "" ) 
     {
-        [System.Windows.Forms.MessageBox]::Show("Le champ 'ID' ne pas être vide", "Erreur de saisie" , "OK", 48 )
+        [System.Windows.Forms.MessageBox]::Show("INPUT REQUIRED", "NO DATA FOUND" , "OK", 48 )
         return ; 
     }
 
@@ -270,7 +270,7 @@ function ADDELEM {
     # Message et retour si la valeur est vide 
     if ( $string_BRAND -eq "" ) 
     {
-        [System.Windows.Forms.MessageBox]::Show("Le champ 'ID' ne pas être vide", "Erreur de saisie" , "OK", 48 )
+        [System.Windows.Forms.MessageBox]::Show("INPUT REQUIRED", "NO DATA FOUND" , "OK", 48 )
         return ; 
     }
 
@@ -279,7 +279,7 @@ function ADDELEM {
     # Message et retour si la valeur est vide 
     if ( $string_MODEL -eq "" ) 
     {
-        [System.Windows.Forms.MessageBox]::Show("Le champ 'ID' ne pas être vide", "Erreur de saisie" , "OK", 48 )
+        [System.Windows.Forms.MessageBox]::Show("INPUT REQUIRED", "NO DATA FOUND" , "OK", 48 )
         return ; 
     }
 
@@ -288,7 +288,7 @@ function ADDELEM {
     # Message et retour si la valeur est vide 
     if ( $string_LOC -eq "" ) 
     {
-        [System.Windows.Forms.MessageBox]::Show("Le champ 'ID' ne pas être vide", "Erreur de saisie" , "OK", 48 )
+        [System.Windows.Forms.MessageBox]::Show("INPUT REQUIRED", "NO DATA FOUND" , "OK", 48 )
         return ; 
     }
 
@@ -297,7 +297,7 @@ function ADDELEM {
     # Message et retour si la valeur est vide 
     if ( $string_AS -eq "" ) 
     {
-        [System.Windows.Forms.MessageBox]::Show("Le champ 'ID' ne pas être vide", "Erreur de saisie" , "OK", 48 )
+        [System.Windows.Forms.MessageBox]::Show("INPUT REQUIRED", "NO DATA FOUND" , "OK", 48 )
         return ; 
     }
 
